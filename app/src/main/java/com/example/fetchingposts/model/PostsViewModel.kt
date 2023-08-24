@@ -8,15 +8,17 @@ import com.example.fetchingposts.repository.PostsRepository
 import kotlinx.coroutines.launch
 
 class PostsViewModel:ViewModel (){
-    var postsrepo= PostsRepository()
+    var postsRepo= PostsRepository()
         var postsLiveData= MutableLiveData<List<Posts>>()
         var errorLiveData= MutableLiveData<String>()
 
-  suspend fun fetchProducts(){
+   fun fetchPosts(){
         viewModelScope.launch{
-            val response=postsrepo.getPosts()
+            val response=postsRepo.getPosts()
             if(response.isSuccessful){
-                postsLiveData.postValue(response.body()?.posts)
+
+                val postsList = response.body() ?: emptyList()
+                postsLiveData.postValue(postsList as List<Posts>)
             }
             else{
                 errorLiveData.postValue(response.errorBody()?.string())
